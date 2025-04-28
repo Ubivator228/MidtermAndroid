@@ -1,31 +1,28 @@
-package com.example.myhobbyapp
-
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.*
-import com.example.myhobbyapp.ui.theme.MyHobbyAppTheme
-
-class MainActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            MyHobbyAppTheme {
-                MyApp()
-            }
-        }
-    }
-}
+import androidx.compose.runtime.Composable
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import com.example.myhobbyapp.DetailsScreen
+import com.example.myhobbyapp.HobbyViewModel
 
 @Composable
-fun MyApp() {
+fun MainScreen(viewModel: HobbyViewModel) {
     val navController = rememberNavController()
-    NavHost(navController, startDestination = "home") {
-        composable("home") { HobbyScreen(navController) }
-        composable("details") { DetailsScreen(navController) }
+
+    NavHost(navController = navController, startDestination = "hobby_list_screen") {
+
+        composable("hobby_list_screen") {
+            HobbyScreen(viewModel = viewModel, navController = navController)
+        }
+
+        composable(
+            "detail_screen/{hobbyId}",
+            arguments = listOf(navArgument("hobbyId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val hobbyId = backStackEntry.arguments?.getString("hobbyId") ?: ""
+            DetailsScreen(hobbyId = hobbyId, viewModel = viewModel)
+        }
     }
 }

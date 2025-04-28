@@ -1,40 +1,29 @@
-package com.example.myhobbyapp
-
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import com.example.myhobbyapp.DetailsScreen
+import com.example.myhobbyapp.HobbyViewModel
 
 @Composable
-fun HobbyScreen(navController: NavController) {
-    Column(
-        modifier = Modifier.fillMaxSize().padding(16.dp)
-    ) {
-        Text(text = "Мое хобби – Теннис", style = MaterialTheme.typography.headlineLarge)
+fun HobbyScreen(viewModel: HobbyViewModel, navController: NavHostController) {
+    val navController = rememberNavController()
 
-        Image(
-            painter = painterResource(id = R.drawable.camera), // Добавь изображение в res/drawable
-            contentDescription = "Camera",
-            modifier = Modifier.fillMaxWidth().height(200.dp).clip(RoundedCornerShape(16.dp))
-        )
+    NavHost(navController = navController, startDestination = "hobby_screen") {
 
-        Text(
-            text = "Я увлекаюсь теннисом уже 5 лет. Люблю играть.",
-            style = MaterialTheme.typography.bodyLarge,
-            modifier = Modifier.padding(vertical = 8.dp)
-        )
+//        composable("hobby_screen") {
+//            HobbyScreen(viewModel = viewModel, navController = navController)
+//        }
 
-        Button(
-            onClick = { navController.navigate("details") },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Подробнее")
+        composable(
+            "detail_screen/{hobbyId}",
+            arguments = listOf(navArgument("hobbyId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val hobbyId = backStackEntry.arguments?.getString("hobbyId") ?: ""
+            DetailsScreen(hobbyId = hobbyId, viewModel = viewModel)
         }
     }
 }
